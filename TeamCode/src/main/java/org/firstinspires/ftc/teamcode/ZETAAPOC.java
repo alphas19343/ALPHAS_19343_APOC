@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.bluetooth.BluetoothServerSocket;
+
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -42,6 +44,7 @@ public class ZETAAPOC extends OpMode {
 
     public enum Intake_To_OutTake {
         START,
+        ARM,
         DOWN_TO_PICK,
         LOCK_PIXELS,
         RESET_POSITION,
@@ -49,11 +52,9 @@ public class ZETAAPOC extends OpMode {
         WAIT_TO_DROP_PIXEL,
     }
 
-    ;
-
     Intake_To_OutTake intake_to_outtake = Intake_To_OutTake.START;
     ElapsedTime intake_to_outtake_timer = new ElapsedTime();
-    final double close_time = 1.5;
+    final double close_time = 1;
 
     @Override
     public void init() {
@@ -96,6 +97,12 @@ public class ZETAAPOC extends OpMode {
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
 
+        //BRAKE FUNCTION
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         //MECANUM DRIVE REVERSE
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -109,10 +116,10 @@ public class ZETAAPOC extends OpMode {
         imu.resetYaw();
 
         //INIT SERVO SETTING
-        LSSLeft.setPosition(0.135);
-        LSSRight.setPosition(0.16);
-        arm.setPosition(1);
-        rotate.setPosition(0.48);
+        LSSLeft.setPosition(0.85);
+        LSSRight.setPosition(0.85);
+        arm.setPosition(0.8);
+        rotate.setPosition(0.51);
         lockLeft.setPosition(0);
         lockRight.setPosition(0);
         drone.setPosition(0.01);
@@ -126,12 +133,21 @@ public class ZETAAPOC extends OpMode {
 
             case START:
                 if (gamepad2.a) {
-                    LSSLeft.setPosition(0.135);
-                    LSSRight.setPosition(0.16);
-                    arm.setPosition(1);
-                    rotate.setPosition(0.48);
+                    arm.setPosition(0.8);
+                    LSSLeft.setPosition(0.94);
+                    LSSRight.setPosition(0.94);
+                    rotate.setPosition(0.51);
                     lockLeft.setPosition(0);
                     lockRight.setPosition(0);
+                    intake_to_outtake_timer.reset();
+                    intake_to_outtake = Intake_To_OutTake.ARM;
+                }
+                break;
+
+            case ARM:
+                if (intake_to_outtake_timer.seconds() >= close_time) {
+                    LSSLeft.setPosition(0.85);
+                    LSSRight.setPosition(0.85);
                     intake_to_outtake_timer.reset();
                     intake_to_outtake = Intake_To_OutTake.DOWN_TO_PICK;
                 }
@@ -139,8 +155,8 @@ public class ZETAAPOC extends OpMode {
 
             case DOWN_TO_PICK:
                 if (gamepad2.y) {
-                    LSSLeft.setPosition(0);
-                    LSSRight.setPosition(0.05);
+                    LSSLeft.setPosition(0.94);
+                    LSSRight.setPosition(0.94);
                     intake_to_outtake_timer.reset();
                     intake_to_outtake = Intake_To_OutTake.LOCK_PIXELS;
                 }
@@ -148,8 +164,8 @@ public class ZETAAPOC extends OpMode {
 
             case LOCK_PIXELS:
                 if (intake_to_outtake_timer.seconds() >= close_time) {
-                    lockRight.setPosition(0.54);
-                    lockLeft.setPosition(0.6);
+                    lockRight.setPosition(0.6);
+                    lockLeft.setPosition(0.55);
                     intake_to_outtake_timer.reset();
                     intake_to_outtake = Intake_To_OutTake.RESET_POSITION;
                 }
@@ -157,10 +173,10 @@ public class ZETAAPOC extends OpMode {
 
             case RESET_POSITION:
                 if (intake_to_outtake_timer.seconds() >= close_time) {
-                    LSSLeft.setPosition(0.135);
-                    LSSRight.setPosition(0.16);
-                    arm.setPosition(1);
-                    rotate.setPosition(0.48);
+                    LSSLeft.setPosition(0.85);
+                    LSSRight.setPosition(0.85);
+                    arm.setPosition(0.8);
+                    rotate.setPosition(0.51);
                     intake_to_outtake_timer.reset();
                     intake_to_outtake = Intake_To_OutTake.OUTTAKE_POSITION;
                 }
@@ -168,10 +184,10 @@ public class ZETAAPOC extends OpMode {
 
             case OUTTAKE_POSITION:
                 if (gamepad2.a) {
-                    LSSLeft.setPosition(0.95);
-                    LSSRight.setPosition(1);
-                    arm.setPosition(0.347);
-                    rotate.setPosition(0.48);
+                    LSSLeft.setPosition(0);
+                    LSSRight.setPosition(0);
+                    arm.setPosition(0.12);
+                    rotate.setPosition(0.51);
                     intake_to_outtake_timer.reset();
                     intake_to_outtake = Intake_To_OutTake.WAIT_TO_DROP_PIXEL;
                 }
@@ -182,98 +198,95 @@ public class ZETAAPOC extends OpMode {
                     intake_to_outtake_timer.reset();
                     intake_to_outtake = Intake_To_OutTake.START;
                 }
-                break;
+                    break;
 
-            default:
-                intake_to_outtake = Intake_To_OutTake.START;
-
+                default:
+                    intake_to_outtake = Intake_To_OutTake.START;
         }
 
-        double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
-        double x = gamepad1.left_stick_x;
-        double rx = gamepad1.right_stick_x;
+                double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
+                double x = gamepad1.left_stick_x;
+                double rx = gamepad1.right_stick_x;
 
+                // Field Centric Drive Reset
+                if (gamepad1.dpad_down) {
+                    imu.resetYaw();
+                }
 
-        // Field Centric Drive Reset
-        if (gamepad1.dpad_down) {
-            imu.resetYaw();
+                double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+                // Rotate the movement direction counter to the bots rotation
+                double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+                double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+
+                rotX = rotX * 1.1;  // Counteract imperfect strafing
+
+                // Denominator is the largest motor power (absolute value) or 1
+                // This ensures all the powers maintain the same ratio,
+                // but only if at least one is out of the range [-1, 1]
+                double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+                double frontLeftPower = (rotY + rotX + rx) / denominator;
+                double backLeftPower = (rotY - rotX + rx) / denominator;
+                double frontRightPower = (rotY - rotX - rx) / denominator;
+                double backRightPower = (rotY + rotX - rx) / denominator;
+
+                // MECANUM DRIVE POWER
+                rightFront.setPower(frontRightPower * 0.7);
+                leftFront.setPower(frontLeftPower * 0.7);
+                rightBack.setPower(backRightPower * 0.7);
+                leftBack.setPower(backLeftPower * 0.7);
+
+                // LINEAR SLIDE POWER
+                rightLSM.setPower(gamepad2.left_stick_y);
+                leftLSM.setPower(gamepad2.left_stick_y);
+
+                // RAMP AND ROLLER INTAKE POWER`
+                rollers.setPower(-gamepad2.right_stick_y * 0.5);
+                ramp.setPower(gamepad2.right_stick_y);
+
+                if (gamepad2.right_stick_y != 0) {
+                    intakeLeft.setPosition(0.522);
+                    intakeRight.setPosition(0.52);
+                } else {
+                    intakeLeft.setPosition(0);
+                    intakeRight.setPosition(0);
+                }
+
+                // ROTATE SERVO SETTING
+                if (gamepad1.a) {
+                    rotate.setPosition(0.14);
+                }
+                if (gamepad1.x) {
+                    rotate.setPosition(0.33);
+                }
+                if (gamepad1.y) {
+                    rotate.setPosition(0.8);
+                }
+                if (gamepad1.b) {
+                    rotate.setPosition(1);
+                }
+                if (gamepad1.left_bumper) {
+                    rotate.setPosition(0.49);
+                }
+
+                if (gamepad2.x && intake_to_outtake != Intake_To_OutTake.START) {
+                    intake_to_outtake = Intake_To_OutTake.START;
+                }
+
+                //OUTTAKE LEFT LOCK OPEN
+                if (gamepad2.left_bumper) {
+                    lockLeft.setPosition(0);
+                }
+
+                //OUTTAKE RIGHT LOCK OPEN
+                if (gamepad2.right_bumper) {
+                    lockRight.setPosition(0);
+                }
+
+                // DRONE LAUNCHER
+                if (gamepad2.dpad_down) {
+                    drone.setPosition(0.2);
+                }
         }
-
-        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-
-        // Rotate the movement direction counter to the bots rotation
-        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-        double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
-
-        rotX = rotX * 1.1;  // Counteract imperfect strafing
-
-        // Denominator is the largest motor power (absolute value) or 1
-        // This ensures all the powers maintain the same ratio,
-        // but only if at least one is out of the range [-1, 1]
-        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
-        double frontLeftPower = (rotY + rotX + rx) / denominator;
-        double backLeftPower = (rotY - rotX + rx) / denominator;
-        double frontRightPower = (rotY - rotX - rx) / denominator;
-        double backRightPower = (rotY + rotX - rx) / denominator;
-
-        // MECANUM DRIVE POWER
-        rightFront.setPower(frontRightPower * 0.7);
-        leftFront.setPower(frontLeftPower * 0.7);
-        rightBack.setPower(backRightPower * 0.7);
-        leftBack.setPower(backLeftPower * 0.7);
-
-        // LINEAR SLIDE POWER
-        rightLSM.setPower(gamepad2.left_stick_y);
-        leftLSM.setPower(gamepad2.left_stick_y);
-
-        // RAMP AND ROLLER INTAKE POWER`
-        rollers.setPower(-gamepad2.right_stick_y * 0.6);
-        ramp.setPower(gamepad2.right_stick_y);
-
-        if (gamepad2.right_stick_y != 0) {
-            intakeLeft.setPosition(0.54);
-            intakeRight.setPosition(0.54);
-        } else {
-            intakeLeft.setPosition(0);
-            intakeRight.setPosition(0);
-        }
-
-        // ROTATE SERVO SETTING
-        if (gamepad1.a) {
-            rotate.setPosition(0.14);
-        }
-        if (gamepad1.x) {
-            rotate.setPosition(0.33);
-        }
-        if (gamepad1.y) {
-            rotate.setPosition(0.8);
-        }
-        if (gamepad1.b) {
-            rotate.setPosition(1);
-        }
-        if (gamepad1.left_bumper) {
-            rotate.setPosition(0.49);
-        }
-
-        if (gamepad2.x && intake_to_outtake != Intake_To_OutTake.START) {
-            intake_to_outtake = Intake_To_OutTake.START;
-        }
-
-        //OUTTAKE LEFT LOCK TOGGLE
-        if (gamepad2.left_bumper) {
-            lockLeft.setPosition(0);
-        }
-
-        //OUTTAKE RIGHT LOCK TOGGLE
-        if (gamepad2.right_bumper) {
-            lockRight.setPosition(0);
-        }
-
-        // DRONE LAUNCHER
-        if (gamepad2.dpad_down) {
-            drone.setPosition(0.2);
-        }
-
     }
-}
 
