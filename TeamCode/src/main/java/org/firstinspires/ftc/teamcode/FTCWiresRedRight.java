@@ -73,6 +73,32 @@ public class FTCWiresRedRight extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
+        LSSLeft = hardwareMap.get(Servo.class, "LSSLeft");
+        LSSRight = hardwareMap.get(Servo.class, "LSSRight");
+        arm = hardwareMap.get(Servo.class, "arm");
+        rotate = hardwareMap.get(Servo.class, "rotate");
+        lockLeft = hardwareMap.get(Servo.class, "lockLeft");
+        lockRight = hardwareMap.get(Servo.class, "lockRight");
+
+        //OUTAKE SERVOS REVERSE
+        lockLeft.setDirection(Servo.Direction.REVERSE);
+        LSSLeft.setDirection(Servo.Direction.REVERSE);
+        rotate.setDirection(Servo.Direction.REVERSE);
+
+        // INTAKE SERVOS MAPPING & REVERSAL
+        intakeRight = hardwareMap.get(Servo.class, "intakeRight");
+        intakeLeft = hardwareMap.get(Servo.class, "intakeLeft");
+        rollers = hardwareMap.get(DcMotor.class, "rollers");
+        ramp = hardwareMap.get(CRServo.class, "ramp");
+        intakeLeft.setDirection(Servo.Direction.REVERSE);
+
+        //LINEAR SLIDE MOTORS MAPPING & REVERSE
+        rightLSM = hardwareMap.get(DcMotor.class, "rightLSM");
+        leftLSM = hardwareMap.get(DcMotor.class, "leftLSM");
+
+        lockRight.setPosition(0.55);
+        lockLeft.setPosition(0.55);
+
         //Key Pay inputs to selecting Starting Position of robot
         selectStartingPosition();
         telemetry.addData("Selected Starting Position", startPosition);
@@ -114,6 +140,7 @@ public class FTCWiresRedRight extends LinearOpMode {
         Pose2d initPose = new Pose2d(0, 0, 0); // Starting Pose
         Pose2d moveBeyondTrussPose = new Pose2d(0,0,0);
         Pose2d dropPurplePixelPose = new Pose2d(0, 0, 0);
+        Pose2d dropPurplePixelTruss_2 = new Pose2d(0,0,0);
         Pose2d dropPurplePixelTruss = new Pose2d(0,0,0);
         Pose2d midwayPose1 = new Pose2d(0,0,0);
         Pose2d midwayPose1a = new Pose2d(0,0,0);
@@ -130,39 +157,44 @@ public class FTCWiresRedRight extends LinearOpMode {
         org.firstinspires.ftc.teamcode.MecanumDrive drive = new org.firstinspires.ftc.teamcode.MecanumDrive(hardwareMap, initPose);
 
         initPose = new Pose2d(0, 0, Math.toRadians(0)); //Starting pose
-        moveBeyondTrussPose = new Pose2d(1,0,0);
+        moveBeyondTrussPose = new Pose2d(20,0,0);
 
+        Pose2d park_flip_pose = null;
         switch (startPosition) {
             case RED_RIGHT:
                 drive = new org.firstinspires.ftc.teamcode.MecanumDrive(hardwareMap, initPose);
                 switch(identifiedSpikeMarkLocation){
                     case LEFT:
-                        dropPurplePixelPose = new Pose2d(23, 5, Math.toRadians(35));
-                        dropPurplePixelTruss = new Pose2d(23, 5, Math.toRadians(35));
-                        dropYellowPixelPose = new Pose2d(33, -42, Math.toRadians(-90));
-                        pixelAlignBlackboard = new Pose2d(33, -42, Math.toRadians(-90));
-                        pixelDropSafetyPose = new Pose2d(33, -36, Math.toRadians(-90));
+                        dropPurplePixelPose = new Pose2d(29, 0, Math.toRadians(90));
+                        dropPurplePixelTruss = new Pose2d(29, 5, Math.toRadians(90));
+                        dropPurplePixelTruss_2 = new Pose2d(29, 0, Math.toRadians(90));
+                        dropYellowPixelPose = new Pose2d(16, 39, Math.toRadians(90));
+                        pixelAlignBlackboard = new Pose2d(16, 40, Math.toRadians(90));
+                        pixelDropSafetyPose = new Pose2d(16, 37, Math.toRadians(90));
                         break;
                     case MIDDLE:
-                        dropPurplePixelPose = new Pose2d(26.5, -3, Math.toRadians(0));
-                        dropPurplePixelTruss = new Pose2d(26.5, -3, Math.toRadians(0));
-                        dropYellowPixelPose = new Pose2d(26.5, -42,  Math.toRadians(-90));
-                        pixelAlignBlackboard = new Pose2d(26.5, -42, Math.toRadians(-90));
-                        pixelDropSafetyPose = new Pose2d(26.5, -36, Math.toRadians(-90));
+                        dropPurplePixelPose = new Pose2d(29, 0, Math.toRadians(0));
+                        dropPurplePixelTruss = new Pose2d(28.5, 0, Math.toRadians(0));
+                        dropPurplePixelTruss_2 = new Pose2d(24.75, 0, Math.toRadians(0));
+                        dropYellowPixelPose = new Pose2d(21.505, 40, Math.toRadians(90));
+                        pixelAlignBlackboard = new Pose2d(21.505, 41, Math.toRadians(90));
+                        pixelDropSafetyPose = new Pose2d(21.505, 37, Math.toRadians(90));
                         break;
                     case RIGHT:
-                        dropPurplePixelPose = new Pose2d(26, -16, Math.toRadians(0));
-                        dropPurplePixelTruss = new Pose2d(26, -16, Math.toRadians(0));
-                        dropYellowPixelPose = new Pose2d(21, -42, Math.toRadians(-90));
-                        pixelAlignBlackboard = new Pose2d(21, -42, Math.toRadians(-90));
-                        pixelDropSafetyPose = new Pose2d(21, -36, Math.toRadians(-90));
+                        dropPurplePixelPose = new Pose2d(26, 0, Math.toRadians(-90));
+                        dropPurplePixelTruss = new Pose2d(26, -7.5, Math.toRadians(-90));
+                        dropPurplePixelTruss_2 = new Pose2d(26, 3, Math.toRadians(-90));
+                        dropYellowPixelPose = new Pose2d(29, 40, Math.toRadians(90));
+                        pixelAlignBlackboard = new Pose2d(29, 41, Math.toRadians(90));
+                        pixelDropSafetyPose = new Pose2d(29, 37, Math.toRadians(90));
                         break;
                     // robot starting pose closer to the pins
                 }
 
-                midwayPose1 = new Pose2d(14, 13, Math.toRadians(45));
+                midwayPose1 = new Pose2d(14, 0, Math.toRadians(45));
                 waitSecondsBeforeDrop = 0.5; //TODO: Adjust time to wait for alliance partner to move from board
                 parkPose = new Pose2d(-3, 36, Math.toRadians(90));
+                park_flip_pose = new Pose2d(5, 36, Math.toRadians(4));
                 break;
 
         }
@@ -175,11 +207,30 @@ public class FTCWiresRedRight extends LinearOpMode {
                         .build());
 
         //Code to drop Purple Pixel on Spike Mark
-        safeWaitSeconds(0.5);
+        //safeWaitSeconds(0.5);
         Actions.runBlocking(
                 drive.actionBuilder(drive.pose)
                         .strafeToLinearHeading(dropPurplePixelTruss.position, dropPurplePixelTruss.heading)
+                        .strafeToLinearHeading(dropPurplePixelTruss_2.position, dropPurplePixelTruss_2.heading)
                         .build());
+
+
+        LSSLeft.setPosition(0.5);
+        LSSRight.setPosition(0.5);
+
+
+        safeWaitSeconds(1);
+
+        LSSLeft.setPosition(0);
+        LSSRight.setPosition(0);
+
+        safeWaitSeconds(1);
+
+        arm.setPosition(0);
+        rotate.setPosition(0.45);
+
+        safeWaitSeconds(1);
+        lockRight.setPosition(0);
 
         //Move robot to midwayPose1
         Actions.runBlocking(
@@ -188,7 +239,7 @@ public class FTCWiresRedRight extends LinearOpMode {
                         .build());
 
         //For Blue Right and Red Left, intake pixel from stack
-
+        arm.setPosition(0.12);
 
         safeWaitSeconds(waitSecondsBeforeDrop);
 
@@ -201,7 +252,7 @@ public class FTCWiresRedRight extends LinearOpMode {
 
 
         //TODO : Code to drop Pixel on Backdrop
-        safeWaitSeconds(1);
+        safeWaitSeconds(0.1);
         Actions.runBlocking(
                 drive.actionBuilder(drive.pose)
                         .strafeToLinearHeading(dropYellowPixelPose.position, dropYellowPixelPose.heading)
@@ -211,33 +262,37 @@ public class FTCWiresRedRight extends LinearOpMode {
                         .strafeToLinearHeading(pixelAlignBlackboard.position, dropYellowPixelPose.heading)
                         .build());
 
-        //while (slideRight.isBusy()) {
-        // While the motor is still making its way to 385, do nothing
-        safeWaitSeconds(0.5);
-        //outtakeRightServo.setPosition(1 - 0.53);
-        //sleep(1000);
-        //lockFrontServo.setPosition(0.27);
-        //sleep(1000);
 
-        safeWaitSeconds(0.5);
+        safeWaitSeconds(0.20);
+
+        lockLeft.setPosition(0);
+
+        safeWaitSeconds(0.1);
+
         Actions.runBlocking(
                 drive.actionBuilder(drive.pose)
                         .setReversed(true)
                         .splineToLinearHeading(pixelDropSafetyPose,0)
                         .build());
 
-        safeWaitSeconds(1);
-
-
-
-        //}
-
+        safeWaitSeconds(0.1);
 
         //Move robot to park in Backstage
-        safeWaitSeconds(0.5);
+        safeWaitSeconds(0.1);
         Actions.runBlocking(
                 drive.actionBuilder(drive.pose)
                         .strafeToLinearHeading(parkPose.position, parkPose.heading)
+                        //.splineToLinearHeading(parkPose,0)
+                        .build());
+
+        LSSLeft.setPosition(0.85);
+        LSSRight.setPosition(0.85);
+        arm.setPosition(0.85);
+        rotate.setPosition(0.45);
+
+        Actions.runBlocking(
+                drive.actionBuilder(drive.pose)
+                        .strafeToLinearHeading(park_flip_pose.position, park_flip_pose.heading)
                         //.splineToLinearHeading(parkPose,0)
                         .build());
     }

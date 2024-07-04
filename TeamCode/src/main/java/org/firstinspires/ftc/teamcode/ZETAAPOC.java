@@ -46,6 +46,7 @@ public class ZETAAPOC extends OpMode {
         START,
         ARM,
         DOWN_TO_PICK,
+        ARM_ADJUST,
         LOCK_PIXELS,
         RESET_POSITION,
         OUTTAKE_POSITION,
@@ -55,6 +56,7 @@ public class ZETAAPOC extends OpMode {
     Intake_To_OutTake intake_to_outtake = Intake_To_OutTake.START;
     ElapsedTime intake_to_outtake_timer = new ElapsedTime();
     final double close_time = 1;
+    final double timer = 0.5;
 
     @Override
     public void init() {
@@ -88,8 +90,6 @@ public class ZETAAPOC extends OpMode {
         //LINEAR SLIDE MOTORS MAPPING & REVERSE
         rightLSM = hardwareMap.get(DcMotor.class, "rightLSM");
         leftLSM = hardwareMap.get(DcMotor.class, "leftLSM");
-        rightLSM.setDirection(DcMotorSimple.Direction.REVERSE);
-        rollers.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //MECANUM DRIVE MOTORS MAPPING
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");
@@ -118,8 +118,8 @@ public class ZETAAPOC extends OpMode {
         //INIT SERVO SETTING
         LSSLeft.setPosition(0.85);
         LSSRight.setPosition(0.85);
-        arm.setPosition(0.8);
-        rotate.setPosition(0.51);
+        arm.setPosition(0.85);
+        rotate.setPosition(0.45);
         lockLeft.setPosition(0);
         lockRight.setPosition(0);
         drone.setPosition(0.01);
@@ -133,10 +133,10 @@ public class ZETAAPOC extends OpMode {
 
             case START:
                 if (gamepad2.a) {
-                    arm.setPosition(0.8);
+                    arm.setPosition(0.85);
                     LSSLeft.setPosition(0.94);
                     LSSRight.setPosition(0.94);
-                    rotate.setPosition(0.51);
+                    rotate.setPosition(0.45);
                     lockLeft.setPosition(0);
                     lockRight.setPosition(0);
                     intake_to_outtake_timer.reset();
@@ -157,26 +157,34 @@ public class ZETAAPOC extends OpMode {
                 if (gamepad2.y) {
                     LSSLeft.setPosition(0.94);
                     LSSRight.setPosition(0.94);
+                    arm.setPosition(0.85);
+                    intake_to_outtake_timer.reset();
+                    intake_to_outtake = Intake_To_OutTake.ARM_ADJUST;
+                }
+                break;
+
+            case ARM_ADJUST:
+                if (intake_to_outtake_timer.seconds() >= timer) {
+                    arm.setPosition(0.76);
                     intake_to_outtake_timer.reset();
                     intake_to_outtake = Intake_To_OutTake.LOCK_PIXELS;
                 }
                 break;
 
             case LOCK_PIXELS:
-                if (intake_to_outtake_timer.seconds() >= close_time) {
-                    lockRight.setPosition(0.6);
-                    lockLeft.setPosition(0.55);
+                if (intake_to_outtake_timer.seconds() >= timer) {
+                    lockRight.setPosition(0.51);
+                    lockLeft.setPosition(0.51);
                     intake_to_outtake_timer.reset();
                     intake_to_outtake = Intake_To_OutTake.RESET_POSITION;
                 }
                 break;
-
             case RESET_POSITION:
-                if (intake_to_outtake_timer.seconds() >= close_time) {
+                if (intake_to_outtake_timer.seconds() >= timer) {
                     LSSLeft.setPosition(0.85);
                     LSSRight.setPosition(0.85);
-                    arm.setPosition(0.8);
-                    rotate.setPosition(0.51);
+                    arm.setPosition(0.85);
+                    rotate.setPosition(0.45);
                     intake_to_outtake_timer.reset();
                     intake_to_outtake = Intake_To_OutTake.OUTTAKE_POSITION;
                 }
@@ -187,7 +195,7 @@ public class ZETAAPOC extends OpMode {
                     LSSLeft.setPosition(0);
                     LSSRight.setPosition(0);
                     arm.setPosition(0.12);
-                    rotate.setPosition(0.51);
+                    rotate.setPosition(0.45);
                     intake_to_outtake_timer.reset();
                     intake_to_outtake = Intake_To_OutTake.WAIT_TO_DROP_PIXEL;
                 }
@@ -254,19 +262,19 @@ public class ZETAAPOC extends OpMode {
 
                 // ROTATE SERVO SETTING
                 if (gamepad1.a) {
-                    rotate.setPosition(0.14);
+                    rotate.setPosition(0.12);
                 }
                 if (gamepad1.x) {
-                    rotate.setPosition(0.33);
+                    rotate.setPosition(0.31);
                 }
                 if (gamepad1.y) {
-                    rotate.setPosition(0.8);
+                    rotate.setPosition(0.78);
                 }
                 if (gamepad1.b) {
-                    rotate.setPosition(1);
+                    rotate.setPosition(0.98);
                 }
                 if (gamepad1.left_bumper) {
-                    rotate.setPosition(0.49);
+                    rotate.setPosition(0.47);
                 }
 
                 if (gamepad2.x && intake_to_outtake != Intake_To_OutTake.START) {
@@ -281,6 +289,12 @@ public class ZETAAPOC extends OpMode {
                 //OUTTAKE RIGHT LOCK OPEN
                 if (gamepad2.right_bumper) {
                     lockRight.setPosition(0);
+                }
+
+                //LOCK CLOSED
+                if (gamepad2.b) {
+                    lockRight.setPosition(0.51);
+                    lockLeft.setPosition(0.51);
                 }
 
                 // DRONE LAUNCHER
