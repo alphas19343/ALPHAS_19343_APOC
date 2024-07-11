@@ -24,8 +24,8 @@ import java.util.List;
 /**
  * FTC WIRES Autonomous Example for only vision detection using tensorflow and park
  */
-@Autonomous(name = "FTC Wires BlueRight", group = "00-Autonomous", preselectTeleOp = "FTC Wires TeleOp")
-public class FTCWiresBlueRight extends LinearOpMode {
+@Autonomous(name = "FTC Wires RedLeft2", group = "00-Autonomous", preselectTeleOp = "FTC Wires TeleOp")
+public class FTCWiresRedLeft2 extends LinearOpMode {
     public Servo LSSLeft = null;
     public Servo LSSRight = null;
 
@@ -51,17 +51,17 @@ public class FTCWiresBlueRight extends LinearOpMode {
     private TfodProcessor tfod;
     private VisionPortal visionPortal;
 
-    private static final String TFOD_MODEL_ASSET = "blue cube model.tflite";
+    private static final String TFOD_MODEL_ASSET = "red cube model.tflite";
 
     private static final String[] LABELS = {
             "cube",
     }
-    ;
+            ;
 
     //Define and declare Robot Starting Locations
     public enum START_POSITION{
 
-        BLUE_RIGHT
+        RED_LEFT
 
 
     }
@@ -168,16 +168,16 @@ public class FTCWiresBlueRight extends LinearOpMode {
         Pose2d moveBeyondTrussPose_2 = null;
         Pose2d intakeStack_pre = null;
         switch (startPosition) {
-            case BLUE_RIGHT:
+            case RED_LEFT:
                 drive = new org.firstinspires.ftc.teamcode.MecanumDrive(hardwareMap, initPose);
                 switch (identifiedSpikeMarkLocation) {
                     case LEFT:
                         //dropPurplePixelPose = new Pose2d(24, 8, Math.toRadians(30));
                         moveBeyondTrussPose_2 = new Pose2d(20, 0, 0);
-                        dropPurplePixelPose = new Pose2d(25, 15, Math.toRadians(87));
+                        dropPurplePixelPose = new Pose2d(25, -15, Math.toRadians(87));
 
-                        midwayPose1 = new Pose2d(8, -8, Math.toRadians(90));
-                        midwayPose1a = new Pose2d(18, -17, Math.toRadians(90));
+                        midwayPose1 = new Pose2d(32, -8, Math.toRadians(90));
+                        midwayPose1a = new Pose2d(37, -17, Math.toRadians(90));
                         intakeStack_pre = new Pose2d(48, -17, Math.toRadians(88.5));
                         intakeStack = new Pose2d(48, -25.4, Math.toRadians(90));
 
@@ -188,29 +188,28 @@ public class FTCWiresBlueRight extends LinearOpMode {
                         parkPose_2 = new Pose2d(34, 78, Math.toRadians(90));
                         parkPose = new Pose2d(50, 84, Math.toRadians(0));
 
-                        dropPurplePixelPose_2 = new Pose2d(28, 0.635, Math.toRadians(89.5));
+                        dropPurplePixelPose_2 = new Pose2d(26, 0.655, Math.toRadians(89.5));
                         dropYellowPixelPose = new Pose2d(27, 85, Math.toRadians(90));
                         pixelAlignBlackboard = new Pose2d(26, 83, Math.toRadians(90));
                         pixelDropSafetyPose = new Pose2d(25, 88, Math.toRadians(90));
                         break;
                     case MIDDLE:
-                        dropPurplePixelPose = new Pose2d(34, 0, Math.toRadians(0));
+                        dropPurplePixelPose = new Pose2d(29, 0, Math.toRadians(0));
                         dropPurplePixelPose_2 = new Pose2d(22.2, 0, Math.toRadians(0));
+                        midwayPose1 = new Pose2d(8, 8, Math.toRadians(-90));
+                        midwayPose1a = new Pose2d(18, 17, Math.toRadians(-90));
+                        intakeStack = new Pose2d(45, 25, Math.toRadians(-93));
+                        intakeStack_2 = new Pose2d(47, 0, Math.toRadians(-87));
+                        intakeStack_3 = new Pose2d(47, -20, Math.toRadians(-87));
 
-                        midwayPose1 = new Pose2d(8, -8, Math.toRadians(90));
-                        midwayPose1a = new Pose2d(18, -17, Math.toRadians(90));
-                        intakeStack = new Pose2d(46, -26, Math.toRadians(93));
-                        intakeStack_2 = new Pose2d(47.5, 0, Math.toRadians(87));
-                        intakeStack_3 = new Pose2d(47.5, -20, Math.toRadians(87));
-
-                        midwayPose2 = new Pose2d(52, 80, Math.toRadians(92.5));
+                        midwayPose2 = new Pose2d(55, -10, Math.toRadians(-91.5));
                         waitSecondsBeforeDrop = 2; //TODO: Adjust time to wait for alliance partner to move from board
-                        parkPose_2 = new Pose2d(34, 78, Math.toRadians(90));
-                        parkPose = new Pose2d(50, 84, Math.toRadians(0));
+                        parkPose_2 = new Pose2d(55, -78, Math.toRadians(-90));
+                        parkPose = new Pose2d(55, -84, Math.toRadians(0));
 
-                        dropYellowPixelPose = new Pose2d(38, 85, Math.toRadians(90));
-                        pixelAlignBlackboard = new Pose2d(37, 83, Math.toRadians(90));
-                        pixelDropSafetyPose = new Pose2d(36.5, 88, Math.toRadians(90));
+                        dropYellowPixelPose = new Pose2d(38, -85, Math.toRadians(-90));
+                        pixelAlignBlackboard = new Pose2d(37, -83, Math.toRadians(-90));
+                        pixelDropSafetyPose = new Pose2d(36.5, - 88, Math.toRadians(-90));
                         break;
                     case RIGHT:
                         dropPurplePixelPose = new Pose2d(25, -15, Math.toRadians(-87));
@@ -320,7 +319,7 @@ public class FTCWiresBlueRight extends LinearOpMode {
 
             LSSLeft.setPosition(0.85);
             LSSRight.setPosition(0.85);
-            arm.setPosition(0.85);
+            arm.setPosition(0.78);
             rotate.setPosition(0.45);
         }
         //Code to drop Purple Pixel on Spike Mark
@@ -334,7 +333,7 @@ public class FTCWiresBlueRight extends LinearOpMode {
 
             LSSLeft.setPosition(0.85);
             LSSRight.setPosition(0.85);
-            arm.setPosition(0.85);
+            arm.setPosition(0.78);
             rotate.setPosition(0.45);
 
             Actions.runBlocking(
@@ -354,7 +353,7 @@ public class FTCWiresBlueRight extends LinearOpMode {
 
             LSSLeft.setPosition(0.85);
             LSSRight.setPosition(0.85);
-            arm.setPosition(0.85);
+            arm.setPosition(0.78);
             rotate.setPosition(0.45);
         }
 
@@ -390,18 +389,18 @@ public class FTCWiresBlueRight extends LinearOpMode {
 
         if (identifiedSpikeMarkLocation == IDENTIFIED_SPIKE_MARK_LOCATION.MIDDLE){
 
-            intakeLeft.setPosition(0.34);
-            intakeRight.setPosition(0.34);
+            intakeLeft.setPosition(0.32);
+            intakeRight.setPosition(0.32);
 
         }
 
-        if (identifiedSpikeMarkLocation == IDENTIFIED_SPIKE_MARK_LOCATION.LEFT || identifiedSpikeMarkLocation == IDENTIFIED_SPIKE_MARK_LOCATION.RIGHT){
+        if (identifiedSpikeMarkLocation == IDENTIFIED_SPIKE_MARK_LOCATION.LEFT || identifiedSpikeMarkLocation == IDENTIFIED_SPIKE_MARK_LOCATION.RIGHT || identifiedSpikeMarkLocation == IDENTIFIED_SPIKE_MARK_LOCATION.MIDDLE){
             rollers.setPower(-0.7);
             ramp.setPower(1);
             safeWaitSeconds(1);
 
-            intakeLeft.setPosition(0.305);
-            intakeRight.setPosition(0.305);
+            intakeLeft.setPosition(0.36);
+            intakeRight.setPosition(0.36);
         }
 
         Actions.runBlocking(
@@ -453,7 +452,7 @@ public class FTCWiresBlueRight extends LinearOpMode {
 
         LSSLeft.setPosition(0.94);
         LSSRight.setPosition(0.94);
-        arm.setPosition(0.85);
+        arm.setPosition(0.78);
 
         safeWaitSeconds(0.5);
 
@@ -527,7 +526,7 @@ public class FTCWiresBlueRight extends LinearOpMode {
 
 
             int x = 0;
-            if (x == 0){startPosition = START_POSITION.BLUE_RIGHT;
+            if (x == 0){startPosition = START_POSITION.RED_LEFT;
                 break;}
 
 
@@ -634,7 +633,7 @@ public class FTCWiresBlueRight extends LinearOpMode {
             telemetry.addData("- Position", "%.0f / %.0f", x, y);
             telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
 
-            if (startPosition == START_POSITION.BLUE_RIGHT ) {
+            if (startPosition == START_POSITION.RED_LEFT ) {
                 if (recognition.getLabel() == "cube") {
                     if (x < 150) {
                         identifiedSpikeMarkLocation = IDENTIFIED_SPIKE_MARK_LOCATION.LEFT;

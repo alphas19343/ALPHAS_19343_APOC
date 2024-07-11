@@ -37,6 +37,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -125,11 +126,10 @@ public class FTCWiresBlueLeft extends LinearOpMode {
         //LINEAR SLIDE MOTORS MAPPING & REVERSE
         rightLSM = hardwareMap.get(DcMotor.class, "rightLSM");
         leftLSM = hardwareMap.get(DcMotor.class, "leftLSM");
+        rightLSM.setDirection(DcMotorSimple.Direction.REVERSE);
 
         lockRight.setPosition(0.55);
         lockLeft.setPosition(0.55);
-
-
 
         //Key Pay inputs to selecting Starting Position of robot
         selectStartingPosition();
@@ -185,42 +185,43 @@ public class FTCWiresBlueLeft extends LinearOpMode {
         Pose2d pixelAlignBlackboard = new Pose2d(0, 0, 0);
         Pose2d pixelDropSafetyPose = new Pose2d(0, 0, 0);
         Pose2d parkPose = new Pose2d(0, 0, 0);
+        Pose2d park_flip_pose = new Pose2d(0,0,0);
+
         double waitSecondsBeforeDrop = 0;
         org.firstinspires.ftc.teamcode.MecanumDrive drive = new org.firstinspires.ftc.teamcode.MecanumDrive(hardwareMap, initPose);
 
         initPose = new Pose2d(0, 0, Math.toRadians(0)); //Starting pose
         moveBeyondTrussPose = new Pose2d(20, 0, 0);
 
-        Pose2d park_flip_pose = null;
         switch (startPosition) {
             case BLUE_LEFT:
                 drive = new org.firstinspires.ftc.teamcode.MecanumDrive(hardwareMap, initPose);
                 switch (identifiedSpikeMarkLocation) {
                     case LEFT:
-                        dropPurplePixelPose = new Pose2d(29, 0, Math.toRadians(90));
-                        dropPurplePixelTruss = new Pose2d(29, 7, Math.toRadians(90));
+                        dropPurplePixelPose = new Pose2d(29, 5, Math.toRadians(90));
+                        dropPurplePixelTruss = new Pose2d(29, 5, Math.toRadians(90));
                         dropPurplePixelTruss_2 = new Pose2d(29, 0, Math.toRadians(90));
-                        dropYellowPixelPose = new Pose2d(16, 39, Math.toRadians(90));
-                        pixelAlignBlackboard = new Pose2d(16, 40, Math.toRadians(90));
-                        pixelDropSafetyPose = new Pose2d(16, 37, Math.toRadians(90));
+                        dropYellowPixelPose = new Pose2d(16, 42, Math.toRadians(90));
+                        pixelAlignBlackboard = new Pose2d(16, 42, Math.toRadians(90));
+                        pixelDropSafetyPose = new Pose2d(16, 36, Math.toRadians(90));
                         break;
                     // robot starting pose center
                     case MIDDLE:
                         dropPurplePixelPose = new Pose2d(29, 0, Math.toRadians(0));
                         dropPurplePixelTruss = new Pose2d(28.5, 0, Math.toRadians(0));
-                        dropPurplePixelTruss_2 = new Pose2d(24.75, 0, Math.toRadians(0));
-                        dropYellowPixelPose = new Pose2d(21.505, 40, Math.toRadians(90));
-                        pixelAlignBlackboard = new Pose2d(21.505, 41, Math.toRadians(90));
-                        pixelDropSafetyPose = new Pose2d(21.505, 37, Math.toRadians(90));
+                        dropPurplePixelTruss_2 = new Pose2d(25.5, 0, Math.toRadians(0));
+                        dropYellowPixelPose = new Pose2d(23, 42, Math.toRadians(90));
+                        pixelAlignBlackboard = new Pose2d(23, 41, Math.toRadians(90));
+                        pixelDropSafetyPose = new Pose2d(23, 36.5, Math.toRadians(90));
                         break;
                     // robot starting pose center
                     case RIGHT:
-                        dropPurplePixelPose = new Pose2d(26, 0, Math.toRadians(-90));
-                        dropPurplePixelTruss = new Pose2d(26, -7.5, Math.toRadians(-90));
-                        dropPurplePixelTruss_2 = new Pose2d(26, 3, Math.toRadians(-90));
-                        dropYellowPixelPose = new Pose2d(29, 40, Math.toRadians(90));
-                        pixelAlignBlackboard = new Pose2d(29, 41, Math.toRadians(90));
-                        pixelDropSafetyPose = new Pose2d(29, 37, Math.toRadians(90));
+                        dropPurplePixelPose = new Pose2d(26, -15, Math.toRadians(-90));
+                        dropPurplePixelTruss = new Pose2d(26, -15, Math.toRadians(-90));
+                        dropPurplePixelTruss_2 = new Pose2d(26, 4, Math.toRadians(-90));
+                        dropYellowPixelPose = new Pose2d(29, 41, Math.toRadians(90));
+                        pixelAlignBlackboard = new Pose2d(29, 42, Math.toRadians(90));
+                        pixelDropSafetyPose = new Pose2d(29, 36, Math.toRadians(90));
                         break;
                     // robot starting pose closer to the pins
                 }
@@ -271,6 +272,9 @@ public class FTCWiresBlueLeft extends LinearOpMode {
                 drive.actionBuilder(drive.pose)
                         .strafeToLinearHeading(midwayPose1.position, midwayPose1.heading)
                         .build());
+
+        LSSLeft.setPosition(0.1);
+        LSSRight.setPosition(0.1);
 
         //For Blue Right and Red Left, intake pixel from stack
         arm.setPosition(0.12);

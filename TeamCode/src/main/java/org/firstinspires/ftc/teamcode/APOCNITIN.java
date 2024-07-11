@@ -15,9 +15,9 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@TeleOp (name="ZETA APOC")
+@TeleOp (name="APOC NITIN")
 
-public class ZETAAPOC extends OpMode {
+public class APOCNITIN extends OpMode {
     public Servo LSSLeft = null;
     public Servo LSSRight = null;
 
@@ -119,7 +119,7 @@ public class ZETAAPOC extends OpMode {
         //INIT SERVO SETTING
         LSSLeft.setPosition(0.85);
         LSSRight.setPosition(0.85);
-        arm.setPosition(1);
+        arm.setPosition(0.85);
         rotate.setPosition(0.45);
         lockLeft.setPosition(0);
         lockRight.setPosition(0);
@@ -156,8 +156,8 @@ public class ZETAAPOC extends OpMode {
 
             case DOWN_TO_PICK:
                 if (gamepad2.y) {
-                    LSSLeft.setPosition(0.94);
-                    LSSRight.setPosition(0.94);
+                    LSSLeft.setPosition(0.95);
+                    LSSRight.setPosition(0.95);
                     arm.setPosition(0.85);
                     intake_to_outtake_timer.reset();
                     intake_to_outtake = Intake_To_OutTake.ARM_ADJUST;
@@ -166,7 +166,7 @@ public class ZETAAPOC extends OpMode {
 
             case ARM_ADJUST:
                 if (intake_to_outtake_timer.seconds() >= timer) {
-                    arm.setPosition(0.76);
+                    arm.setPosition(0.78);
                     intake_to_outtake_timer.reset();
                     intake_to_outtake = Intake_To_OutTake.LOCK_PIXELS;
                 }
@@ -174,8 +174,65 @@ public class ZETAAPOC extends OpMode {
 
             case LOCK_PIXELS:
                 if (intake_to_outtake_timer.seconds() >= timer) {
-                    lockRight.setPosition(0.51);
-                    lockLeft.setPosition(0.51);
+                    lockRight.setPosition(0.53);
+                    lockLeft.setPosition(0.53
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    );
                     intake_to_outtake_timer.reset();
                     intake_to_outtake = Intake_To_OutTake.RESET_POSITION;
                 }
@@ -207,101 +264,101 @@ public class ZETAAPOC extends OpMode {
                     intake_to_outtake_timer.reset();
                     intake_to_outtake = Intake_To_OutTake.START;
                 }
-                    break;
+                break;
 
-                default:
-                    intake_to_outtake = Intake_To_OutTake.START;
+            default:
+                intake_to_outtake = Intake_To_OutTake.START;
         }
 
-                double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
-                double x = gamepad1.left_stick_x;
-                double rx = gamepad1.right_stick_x;
+        double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
+        double x = gamepad1.left_stick_x;
+        double rx = gamepad1.right_stick_x;
 
-                // Field Centric Drive Reset
-                if (gamepad1.dpad_down) {
-                    imu.resetYaw();
-                }
+        // Field Centric Drive Reset
+        if (gamepad1.dpad_down) {
+            imu.resetYaw();
+        }
 
-                double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
-                // Rotate the movement direction counter to the bots rotation
-                double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-                double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+        // Rotate the movement direction counter to the bots rotation
+        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+        double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
 
-                rotX = rotX * 1.1;  // Counteract imperfect strafing
+        rotX = rotX * 1.1;  // Counteract imperfect strafing
 
-                // Denominator is the largest motor power (absolute value) or 1
-                // This ensures all the powers maintain the same ratio,
-                // but only if at least one is out of the range [-1, 1]
-                double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
-                double frontLeftPower = (rotY + rotX + rx) / denominator;
-                double backLeftPower = (rotY - rotX + rx) / denominator;
-                double frontRightPower = (rotY - rotX - rx) / denominator;
-                double backRightPower = (rotY + rotX - rx) / denominator;
+        // Denominator is the largest motor power (absolute value) or 1
+        // This ensures all the powers maintain the same ratio,
+        // but only if at least one is out of the range [-1, 1]
+        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+        double frontLeftPower = (rotY + rotX + rx) / denominator;
+        double backLeftPower = (rotY - rotX + rx) / denominator;
+        double frontRightPower = (rotY - rotX - rx) / denominator;
+        double backRightPower = (rotY + rotX - rx) / denominator;
 
-                // MECANUM DRIVE POWER
-                rightFront.setPower(frontRightPower * 0.7);
-                leftFront.setPower(frontLeftPower * 0.7);
-                rightBack.setPower(backRightPower * 0.7);
-                leftBack.setPower(backLeftPower * 0.7);
+        // MECANUM DRIVE POWER
+        rightFront.setPower(frontRightPower * 0.8);
+        leftFront.setPower(frontLeftPower * 0.8);
+        rightBack.setPower(backRightPower * 0.8);
+        leftBack.setPower(backLeftPower * 0.8);
 
-                // LINEAR SLIDE POWER
-                rightLSM.setPower(gamepad2.left_stick_y);
-                leftLSM.setPower(gamepad2.left_stick_y);
+        // LINEAR SLIDE POWER
+        rightLSM.setPower(gamepad2.left_stick_y);
+        leftLSM.setPower(gamepad2.left_stick_y);
 
-                // RAMP AND ROLLER INTAKE POWER`
-                rollers.setPower(-gamepad2.right_stick_y * 0.5);
-                ramp.setPower(gamepad2.right_stick_y);
+        // RAMP AND ROLLER INTAKE POWER`
+        rollers.setPower(-gamepad2.right_stick_y * 0.5);
+        ramp.setPower(gamepad2.right_stick_y);
 
-                if (gamepad2.right_stick_y != 0) {
-                    intakeLeft.setPosition(0.522);
-                    intakeRight.setPosition(0.52);
-                } else {
-                    intakeLeft.setPosition(0);
-                    intakeRight.setPosition(0);
-                }
+        if (gamepad2.right_stick_y != 0) {
+            intakeLeft.setPosition(0.522);
+            intakeRight.setPosition(0.52);
+        } else {
+            intakeLeft.setPosition(0);
+            intakeRight.setPosition(0);
+        }
 
-                // ROTATE SERVO SETTING
-                if (gamepad1.a) {
-                    rotate.setPosition(0.12);
-                }
-                if (gamepad1.x) {
-                    rotate.setPosition(0.31);
-                }
-                if (gamepad1.y) {
-                    rotate.setPosition(0.78);
-                }
-                if (gamepad1.b) {
-                    rotate.setPosition(0.98);
-                }
-                if (gamepad1.left_bumper) {
-                    rotate.setPosition(0.47);
-                }
+        // ROTATE SERVO SETTING
+        if (gamepad1.a) {
+            rotate.setPosition(0.12);
+        }
+        if (gamepad1.x) {
+            rotate.setPosition(0.31);
+        }
+        if (gamepad1.y) {
+            rotate.setPosition(0.78);
+        }
+        if (gamepad1.b) {
+            rotate.setPosition(0.98);
+        }
+        if (gamepad1.left_bumper) {
+            rotate.setPosition(0.47);
+        }
 
-                if (gamepad2.x && intake_to_outtake != Intake_To_OutTake.START) {
-                    intake_to_outtake = Intake_To_OutTake.START;
-                }
+        if (gamepad2.x && intake_to_outtake != Intake_To_OutTake.START) {
+            intake_to_outtake = Intake_To_OutTake.START;
+        }
 
-                //OUTTAKE LEFT LOCK OPEN
-                if (gamepad2.left_bumper) {
-                    lockLeft.setPosition(0);
-                }
+        //OUTTAKE LEFT LOCK OPEN
+        if (gamepad2.left_bumper) {
+            lockLeft.setPosition(0);
+        }
 
-                //OUTTAKE RIGHT LOCK OPEN
-                if (gamepad2.right_bumper) {
-                    lockRight.setPosition(0);
-                }
+        //OUTTAKE RIGHT LOCK OPEN
+        if (gamepad2.right_bumper) {
+            lockRight.setPosition(0);
+        }
 
-                //LOCK CLOSED
-                if (gamepad2.b) {
-                    lockRight.setPosition(0.51);
-                    lockLeft.setPosition(0.51);
-                }
+        //LOCK CLOSED
+        if (gamepad2.b) {
+            lockRight.setPosition(0.51);
+            lockLeft.setPosition(0.51);
+        }
 
-                // DRONE LAUNCHER
-                if (gamepad2.dpad_down) {
-                    drone.setPosition(0.2);
-                }
+        // DRONE LAUNCHER
+        if (gamepad2.dpad_down) {
+            drone.setPosition(0.2);
         }
     }
+}
 

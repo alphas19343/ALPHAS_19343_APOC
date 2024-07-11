@@ -24,8 +24,8 @@ import java.util.List;
 /**
  * FTC WIRES Autonomous Example for only vision detection using tensorflow and park
  */
-@Autonomous(name = "FTC Wires BlueRight", group = "00-Autonomous", preselectTeleOp = "FTC Wires TeleOp")
-public class FTCWiresBlueRight extends LinearOpMode {
+@Autonomous(name = "FTC Wires BlueRightIntakeLedu", group = "00-Autonomous", preselectTeleOp = "FTC Wires TeleOp")
+public class FTCWiresBlueRightIntakeLedu extends LinearOpMode {
     public Servo LSSLeft = null;
     public Servo LSSRight = null;
 
@@ -56,7 +56,7 @@ public class FTCWiresBlueRight extends LinearOpMode {
     private static final String[] LABELS = {
             "cube",
     }
-    ;
+            ;
 
     //Define and declare Robot Starting Locations
     public enum START_POSITION{
@@ -183,7 +183,7 @@ public class FTCWiresBlueRight extends LinearOpMode {
 
                         intakeStack_3 = new Pose2d(47.5, -20, Math.toRadians(87));
 
-                        midwayPose2 = new Pose2d(52, 80, Math.toRadians(90));
+                        midwayPose2 = new Pose2d(48, 80, Math.toRadians(90));
                         waitSecondsBeforeDrop = 2; //TODO: Adjust time to wait for alliance partner to move from board
                         parkPose_2 = new Pose2d(34, 78, Math.toRadians(90));
                         parkPose = new Pose2d(50, 84, Math.toRadians(0));
@@ -203,7 +203,7 @@ public class FTCWiresBlueRight extends LinearOpMode {
                         intakeStack_2 = new Pose2d(47.5, 0, Math.toRadians(87));
                         intakeStack_3 = new Pose2d(47.5, -20, Math.toRadians(87));
 
-                        midwayPose2 = new Pose2d(52, 80, Math.toRadians(92.5));
+                        midwayPose2 = new Pose2d(48, 80, Math.toRadians(92.5));
                         waitSecondsBeforeDrop = 2; //TODO: Adjust time to wait for alliance partner to move from board
                         parkPose_2 = new Pose2d(34, 78, Math.toRadians(90));
                         parkPose = new Pose2d(50, 84, Math.toRadians(0));
@@ -230,7 +230,7 @@ public class FTCWiresBlueRight extends LinearOpMode {
                         intakeStack_2 = new Pose2d(47.5, 0, Math.toRadians(87));
                         intakeStack_3 = new Pose2d(47.5, -20, Math.toRadians(87));
 
-                        midwayPose2 = new Pose2d(52, 80, Math.toRadians(90));
+                        midwayPose2 = new Pose2d(48, 80, Math.toRadians(90));
                         waitSecondsBeforeDrop = 2; //TODO: Adjust time to wait for alliance partner to move from board
                         parkPose_2 = new Pose2d(34, 78, Math.toRadians(90));
                         parkPose = new Pose2d(50, 84, Math.toRadians(0));
@@ -388,32 +388,32 @@ public class FTCWiresBlueRight extends LinearOpMode {
 
 
 
-        if (identifiedSpikeMarkLocation == IDENTIFIED_SPIKE_MARK_LOCATION.MIDDLE){
+//        if (identifiedSpikeMarkLocation == IDENTIFIED_SPIKE_MARK_LOCATION.MIDDLE){
+//
+//            intakeLeft.setPosition(0.34);
+//            intakeRight.setPosition(0.34);
+//
+//        }
 
-            intakeLeft.setPosition(0.34);
-            intakeRight.setPosition(0.34);
+//        if (identifiedSpikeMarkLocation == IDENTIFIED_SPIKE_MARK_LOCATION.LEFT || identifiedSpikeMarkLocation == IDENTIFIED_SPIKE_MARK_LOCATION.RIGHT){
+//            rollers.setPower(-0.7);
+//            ramp.setPower(1);
+//            safeWaitSeconds(1);
+//
+//            intakeLeft.setPosition(0.305);
+//            intakeRight.setPosition(0.305);
+//        }
+//
+//        Actions.runBlocking(
+//                drive.actionBuilder(drive.pose)
+//                        .strafeToLinearHeading(intakeStack.position, intakeStack.heading)
+//
+//                        .build());
 
-        }
-
-        if (identifiedSpikeMarkLocation == IDENTIFIED_SPIKE_MARK_LOCATION.LEFT || identifiedSpikeMarkLocation == IDENTIFIED_SPIKE_MARK_LOCATION.RIGHT){
-            rollers.setPower(-0.7);
-            ramp.setPower(1);
-            safeWaitSeconds(1);
-
-            intakeLeft.setPosition(0.305);
-            intakeRight.setPosition(0.305);
-        }
-
-        Actions.runBlocking(
-                drive.actionBuilder(drive.pose)
-                        .strafeToLinearHeading(intakeStack.position, intakeStack.heading)
-
-                        .build());
-
-
-        rollers.setPower(-0.7);
-        ramp.setPower(1);
-        safeWaitSeconds(1);
+//
+//        rollers.setPower(-0.7);
+//        ramp.setPower(1);
+//        safeWaitSeconds(1);
 
 //        Actions.runBlocking(
 //                drive.actionBuilder(drive.pose)
@@ -495,7 +495,7 @@ public class FTCWiresBlueRight extends LinearOpMode {
                         .strafeToLinearHeading(pixelDropSafetyPose.position, pixelDropSafetyPose.heading)
                         .build());
 
-        rotate.setPosition(0.98);
+        //rotate.setPosition(0.98);
         lockRight.setPosition(0);
         lockLeft.setPosition(0);
 

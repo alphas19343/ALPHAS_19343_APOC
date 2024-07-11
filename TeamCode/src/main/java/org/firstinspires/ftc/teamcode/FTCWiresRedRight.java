@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -64,6 +65,7 @@ public class FTCWiresRedRight extends LinearOpMode {
     public static START_POSITION startPosition;
 
     public enum IDENTIFIED_SPIKE_MARK_LOCATION {
+
         LEFT,
         MIDDLE,
         RIGHT
@@ -95,6 +97,7 @@ public class FTCWiresRedRight extends LinearOpMode {
         //LINEAR SLIDE MOTORS MAPPING & REVERSE
         rightLSM = hardwareMap.get(DcMotor.class, "rightLSM");
         leftLSM = hardwareMap.get(DcMotor.class, "leftLSM");
+        rightLSM.setDirection(DcMotorSimple.Direction.REVERSE);
 
         lockRight.setPosition(0.55);
         lockLeft.setPosition(0.55);
@@ -152,49 +155,50 @@ public class FTCWiresRedRight extends LinearOpMode {
         Pose2d dropYellowPixelPose = new Pose2d(0, 0, 0);
         Pose2d pixelAlignBlackboard = new Pose2d (0,0,0);
         Pose2d pixelDropSafetyPose = new Pose2d(0,0,0);
+        Pose2d park_flip_pose = new Pose2d(0,0,0);
         Pose2d parkPose = new Pose2d(0,0, 0);
+
         double waitSecondsBeforeDrop = 0;
         org.firstinspires.ftc.teamcode.MecanumDrive drive = new org.firstinspires.ftc.teamcode.MecanumDrive(hardwareMap, initPose);
 
         initPose = new Pose2d(0, 0, Math.toRadians(0)); //Starting pose
         moveBeyondTrussPose = new Pose2d(20,0,0);
 
-        Pose2d park_flip_pose = null;
         switch (startPosition) {
             case RED_RIGHT:
                 drive = new org.firstinspires.ftc.teamcode.MecanumDrive(hardwareMap, initPose);
                 switch(identifiedSpikeMarkLocation){
                     case LEFT:
-                        dropPurplePixelPose = new Pose2d(29, 0, Math.toRadians(90));
-                        dropPurplePixelTruss = new Pose2d(29, 5, Math.toRadians(90));
-                        dropPurplePixelTruss_2 = new Pose2d(29, 0, Math.toRadians(90));
-                        dropYellowPixelPose = new Pose2d(16, 39, Math.toRadians(90));
-                        pixelAlignBlackboard = new Pose2d(16, 40, Math.toRadians(90));
-                        pixelDropSafetyPose = new Pose2d(16, 37, Math.toRadians(90));
+                        dropPurplePixelPose = new Pose2d(27, 8, Math.toRadians(90));
+                        dropPurplePixelTruss = new Pose2d(27, -1, Math.toRadians(90));
+                        dropPurplePixelTruss_2 = new Pose2d(27, -2, Math.toRadians(90));
+                        dropYellowPixelPose = new Pose2d(31, -42, Math.toRadians(-90));
+                        pixelAlignBlackboard = new Pose2d(31, -41, Math.toRadians(-90));
+                        pixelDropSafetyPose = new Pose2d(31, -36, Math.toRadians(-90));
                         break;
                     case MIDDLE:
-                        dropPurplePixelPose = new Pose2d(29, 0, Math.toRadians(0));
-                        dropPurplePixelTruss = new Pose2d(28.5, 0, Math.toRadians(0));
-                        dropPurplePixelTruss_2 = new Pose2d(24.75, 0, Math.toRadians(0));
-                        dropYellowPixelPose = new Pose2d(21.505, 40, Math.toRadians(90));
-                        pixelAlignBlackboard = new Pose2d(21.505, 41, Math.toRadians(90));
-                        pixelDropSafetyPose = new Pose2d(21.505, 37, Math.toRadians(90));
+                        dropPurplePixelPose = new Pose2d(31, -3, Math.toRadians(0));
+                        dropPurplePixelTruss = new Pose2d(30.5, -2.5, Math.toRadians(0));
+                        dropPurplePixelTruss_2 = new Pose2d(24, 0, Math.toRadians(0));
+                        dropYellowPixelPose = new Pose2d(23, -41, Math.toRadians(-90));
+                        pixelAlignBlackboard = new Pose2d(23, -42, Math.toRadians(-90));
+                        pixelDropSafetyPose = new Pose2d(23, -36, Math.toRadians(-90));
                         break;
                     case RIGHT:
-                        dropPurplePixelPose = new Pose2d(26, 0, Math.toRadians(-90));
-                        dropPurplePixelTruss = new Pose2d(26, -7.5, Math.toRadians(-90));
-                        dropPurplePixelTruss_2 = new Pose2d(26, 3, Math.toRadians(-90));
-                        dropYellowPixelPose = new Pose2d(29, 40, Math.toRadians(90));
-                        pixelAlignBlackboard = new Pose2d(29, 41, Math.toRadians(90));
-                        pixelDropSafetyPose = new Pose2d(29, 37, Math.toRadians(90));
+                        dropPurplePixelPose = new Pose2d(26, -5, Math.toRadians(-90));
+                        dropPurplePixelTruss = new Pose2d(27, -10, Math.toRadians(-90));
+                        dropPurplePixelTruss_2 = new Pose2d(29.5, 2.5, Math.toRadians(-90));
+                        dropYellowPixelPose = new Pose2d(14.505, -40, Math.toRadians(-90));
+                        pixelAlignBlackboard = new Pose2d(14.505, -42, Math.toRadians(-90));
+                        pixelDropSafetyPose = new Pose2d(14.505, -36, Math.toRadians(-90));
                         break;
                     // robot starting pose closer to the pins
                 }
 
-                midwayPose1 = new Pose2d(14, 0, Math.toRadians(45));
+                midwayPose1 = new Pose2d(12, -5, Math.toRadians(0));
                 waitSecondsBeforeDrop = 0.5; //TODO: Adjust time to wait for alliance partner to move from board
-                parkPose = new Pose2d(-3, 36, Math.toRadians(90));
-                park_flip_pose = new Pose2d(5, 36, Math.toRadians(4));
+                parkPose = new Pose2d(5, -36, Math.toRadians(0));
+                park_flip_pose = new Pose2d(6, -36, Math.toRadians(4));
                 break;
 
         }
@@ -421,7 +425,8 @@ public class FTCWiresRedRight extends LinearOpMode {
             if (startPosition == START_POSITION.RED_RIGHT ) {
                 if (recognition.getLabel() == "cube") {
                     if (x < 150) {
-                        identifiedSpikeMarkLocation = IDENTIFIED_SPIKE_MARK_LOCATION.LEFT;
+                        identifiedSpikeMarkLocation =
+                                IDENTIFIED_SPIKE_MARK_LOCATION.LEFT;
                     } else if (x > 150 && x<400){
                         identifiedSpikeMarkLocation = IDENTIFIED_SPIKE_MARK_LOCATION.MIDDLE;
                     }
